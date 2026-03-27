@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Mimic Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1c1e21;
+            --text-sub: #65676b;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --blue: #1DA1F2;
+            --green: #4ADE80;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: {{ ratio.width }}px;
+            height: {{ ratio.height }}px;
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient Background */
+        .ambient-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 1. TWEET STYLE */
+        .tweet-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .tweet-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .user-info { display: flex; flex-direction: column; }
+        .name { font-weight: 800; color: #0f1419; font-size: 16px; display: flex; align-items: center; gap: 4px; }
+        .handle { color: #536471; font-size: 15px; }
+
+        .tweet-content {
+            font-size: 19px;
+            line-height: 1.4;
+            color: #0f1419;
+            margin-bottom: 16px;
+        }
+
+        .tweet-metrics {
+            display: flex;
+            gap: 20px;
+            padding-top: 12px;
+            border-top: 1px solid #eff3f4;
+            color: #536471;
+            font-size: 14px;
+        }
+
+        /* 2. IMESSAGE STYLE */
+        .chat-container {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .bubble {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 16px;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .bubble.left {
+            align-self: flex-start;
+            background: #E9E9EB;
+            color: #000;
+            border-bottom-left-radius: 4px;
+        }
+
+        .bubble.right {
+            align-self: flex-end;
+            background: #007AFF;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* 3. NOTIFICATION STYLE */
+        .notif-card {
+            display: none;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 13px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .notif-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+
+        .notif-body {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* Active Switcher */
+        {% set mimic = theme.name.lower() %}
+        {% if 'chat' in mimic or 'message' in mimic or 'bubble' in mimic %}
+            .chat-container { display: flex; }
+        {% elif 'notif' in mimic or 'alert' in mimic or 'popup' in mimic %}
+            .notif-card { display: block; }
+        {% else %}
+            .tweet-card { display: block; }
+        {% endif %}
+
+        /* Shared Product Image */
+        .media-container {
+            margin-top: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .media-container img { width: 100%; height: auto; display: block; }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .animate-pop {
+            opacity: 0;
+            animation: slideUp 0.8s cubic-bezier(0.13, 0.9, 0.4, 1) forwards;
+        }
+
+        .delay-1 { animation-delay: 0.4s; }
+        .delay-2 { animation-delay: 0.8s; }
+        .delay-3 { animation-delay: 1.2s; }
+
+        .cta-overlay {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #000;
+            color: #fff;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 800;
+            text-align: center;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-bg"></div>
+
+    <div class="container">
+        <!-- TWEET STYLE -->
+        <div class="tweet-card animate-pop">
+            <div class="tweet-header">
+                <div class="avatar">
+                    {% if product_image %}
+                    <img src="{{ product_image }}" alt="avatar">
+                    {% else %}
+                    <div style="width:100%; height:100%; background: var(--primary);"></div>
+                    {% endif %}
+                </div>
+                <div class="user-info">
+                    <span class="name">{{ product_name }} 
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#1DA1F2"><path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.97-.81-4.01-1.04-1.01-2.62-1.27-4.01-.81-.67-1.31-1.91-2.19-3.34-2.19-1.43 0-2.67.88-3.34 2.19-1.39-.46-2.97-.2-4.01.81-1.01 1.04-1.27 2.62-.81 4.01-1.31.67-2.19 1.91-2.19 3.34 0 1.43.88 2.67 2.19 3.34-.46 1.39-.2 2.97.81 4.01 1.04 1.01 2.62 1.27 4.01.81.67 1.31 1.91 2.19 3.34 2.19 1.43 0 2.67-.88 3.34-2.19 1.39.46 2.97.2 4.01-.81 1.01-1.04 1.27-2.62.81-4.01 1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2l-3.5-3.5 1.4-1.4 2.1 2.1 5.6-5.6 1.4 1.4-7 7z"/></svg>
+                    </span>
+                    <span class="handle">@{{ product_name|lower|replace(' ', '') }} // Recommended</span>
+                </div>
+            </div>
+            <div class="tweet-content">
+                {{ heading }}
+            </div>
+            {% if product_image %}
+            <div class="media-container">
+                <img src="{{ product_image }}" alt="product">
+            </div>
+            {% endif %}
+            <div class="tweet-metrics">
+                <span><b>42.1K</b> Retweets</span>
+                <span><b>158K</b> Likes</span>
+            </div>
+        </div>
+
+        <!-- CHAT STYLE -->
+        <div class="chat-container">
+            <div class="bubble left animate-pop">{{ catchy_line }}</div>
+            <div class="bubble right animate-pop delay-1">Wait, have you seen this?</div>
+            <div class="bubble left animate-pop delay-2">
+                {{ heading }}
+                {% if product_image %}
+                <div class="media-container">
+                    <img src="{{ product_image }}" alt="product">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- NOTIFICATION STYLE -->
+        <div class="notif-card animate-pop">
+            <div class="notif-header">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                Suggestion • Now
+            </div>
+            <div class="notif-body">
+                <b>{{ product_name }}</b>: {{ heading }}
+            </div>
+        </div>
+
+        <a href="#" class="cta-overlay animate-pop delay-3">{{ cta }}</a>
+    </div>
+
+    <!-- VOICE OVER (Hidden) -->
+    <div style="display:none;">
+        {% if vo_urls %}
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        {% endif %}
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const el = document.getElementById('vo-heading');
+            if (el) setTimeout(() => el.play().catch(e => {}), 1500);
+        });
+    </script>
+</body>
+</html>

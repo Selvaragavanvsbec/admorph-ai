@@ -1,0 +1,46 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Generated
+generated/
+assets/processed/
+assets/uploads/
+
+# Environment
+.env
+
+# Logs
+*.log
+pip_install.log
+render_error.log
+server.log
+server_utf8.log
+frontend/start_error.log
+
+# Database
+*.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Test outputs
+test_output.mp3
+models.txt
+models_utf8.txt
+
+# Temporary
+tmp/

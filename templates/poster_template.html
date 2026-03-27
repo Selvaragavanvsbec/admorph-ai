@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Poster</title>
+    <link href="https://fonts.googleapis.com/css2?family={{ font_family|replace(' ', '+') }}&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#000000' }}{% endif %};
+            --text-color: {{ theme.text_color }};
+            --border-radius: {{ theme.border_radius }};
+            --font-main: '{{ theme.font_family }}', sans-serif;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: {{ ratio.width }}px;
+            height: {{ ratio.height }}px;
+            font-family: var(--font-main);
+            background-color: var(--primary);
+            color: var(--text-color);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Deep Canva-style gradient background */
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.15) 0%, transparent 60%),
+                linear-gradient(135deg, var(--primary) 0%, var(--secondary) 150%);
+            opacity: 0.9;
+            z-index: 1;
+        }
+
+        /* Dynamic Background Patterns & Textures */
+        .texture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.12;
+            pointer-events: none;
+            
+            {% if theme.background_texture == 'dots' or theme.background_texture == 'subtle-dots' %}
+            background-image: radial-gradient(var(--text-color) 1.5px, transparent 1.5px);
+            background-size: 25px 25px;
+            {% elif theme.background_texture == 'grid' %}
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(0,0,0,0.1) 1px, transparent 1px);
+            {% elif theme.background_texture == 'diagonal-lines' %}
+            background: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 15px);
+            {% elif theme.background_texture == 'noise' %}
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            {% endif %}
+        }
+
+        /* Dynamic Grid Layout based on presence of image */
+        .content-grid {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            width: 90%;
+            height: 90%;
+
+            grid-template-columns: {
+                % if product_image %
+            }
+
+            1fr 1fr {
+                % else %
+            }
+
+            1fr {
+                % endif %
+            }
+
+            ;
+            grid-template-rows: auto 1fr auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        /* Header / Logo Area */
+        .header {
+            grid-column: 1 / -1;
+            grid-row: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 2px;
+            padding: 2rem 0;
+        }
+
+        .brand {
+            font-size: min(2rem, 4vw);
+        }
+
+        .campaign-id {
+            font-size: 1rem;
+            opacity: 0.5;
+            font-family: monospace;
+        }
+
+        /* Typography Mastery */
+        .copy-section {
+            grid-column: 1;
+            grid-row: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+                {
+                % if not product_image %
+            }
+
+            align-items: center;
+            text-align: center;
+
+                {
+                % else %
+            }
+
+            align-items: flex-start;
+            text-align: left;
+
+                {
+                % endif %
+            }
+
+            z-index: 12;
+            container-type: inline-size;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 7cqi, 8rem);
+            line-height: 1.05;
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            /* Premium Drop Shadow */
+            text-wrap: balance;
+        }
+
+        .subheadline {
+            font-size: clamp(1.2rem, 3cqi, 2.5rem);
+            line-height: 1.4;
+            font-weight: 500;
+            opacity: 0.9;
+            margin: 0 0 2rem 0;
+            max-width: 85%;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-wrap: balance;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem 3rem;
+            background-color: var(--secondary);
+            color: var(--primary);
+            font-size: min(1.5rem, 3cqi);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        /* Image Masking & Shadow Pro */
+        .image-section {
+            grid-column: 2;
+            grid-row: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            position: relative;
+            z-index: 11;
+        }
+
+        .image-glow {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background: var(--text-color);
+            filter: blur(80px);
+            opacity: 0.2;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .product-image {
+            max-width: 100%;
+            max-height: 110%;
+            /* Allow slight overflow for dynamic pop */
+            object-fit: contain;
+            filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.7));
+            /* Depth */
+            transform: scale(1.05);
+            /* Make it pop */
+        }
+
+        /* Footer */
+        .footer {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            font-size: 0.8rem;
+            opacity: 0.5;
+            letter-spacing: 3px;
+            text-align: right;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+
+        /* Vertical / Banner Adjustments */
+        @media (max-aspect-ratio: 4/5) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr 1fr auto;
+            }
+
+            .copy-section {
+                grid-row: 2;
+                align-items: center;
+                text-align: center;
+            }
+
+            .image-section {
+                grid-row: 3;
+            }
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: fadeInUp 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation-delay: 3s;
+            {% else %}
+            opacity: 0.8;
+            {% endif %}
+        }
+
+        /* 10-Second Cinematic Narrative Timeline */
+        @keyframes bgSweep {
+            0% { filter: brightness(0) saturate(0); }
+            30% { filter: brightness(1.2) saturate(0.5); }
+            100% { filter: brightness(1) saturate(1); }
+        }
+
+        @keyframes revealScale {
+            0% { opacity: 0; transform: scale(2) translateY(50px); filter: blur(20px); }
+            40% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+            100% { transform: scale(1.05); }
+        }
+
+        @keyframes maskReveal {
+            0% { clip-path: inset(0 100% 0 0); opacity: 0; }
+            100% { clip-path: inset(0 0 0 0); opacity: 1; }
+        }
+
+        @keyframes ctaPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(255,255,255,0.4); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,255,255,0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes patternMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 500px 500px; }
+        }
+
+        .background-overlay {
+            {% if render_mode != 'static' %}
+            animation: bgSweep 4s ease-out forwards;
+            {% endif %}
+        }
+
+        h1 {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: maskReveal 2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+            animation-delay: 4s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+        }
+
+        .subheadline {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: fadeInUp 1.5s ease-out forwards;
+            animation-delay: 6s;
+            {% else %}
+            opacity: 0.9;
+            {% endif %}
+        }
+
+        .cta-button {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: fadeInUp 1s ease-out forwards, ctaPulse 3s ease-in-out infinite;
+            animation-delay: 8s, 9s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+        }
+
+        .product-image {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: revealScale 10s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 1s;
+            {% else %}
+            opacity: 1;
+            transform: scale(1.05);
+            {% endif %}
+        }
+
+        .texture-overlay {
+            {% if render_mode != 'static' %}
+            animation: patternMove 100s linear infinite;
+            {% endif %}
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="background-overlay"></div>
+    <div class="texture-overlay"></div>
+
+    <div class="content-grid">
+        <div class="header">
+            <div class="brand">{{ product_name }}</div>
+            <div class="campaign-id">ADMORPH // ENGINE</div>
+        </div>
+
+        <div class="copy-section">
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+            <p class="subheadline">{{ content }}</p>
+            <a href="#" class="cta-button">{{ cta }}</a>
+        </div>
+
+        {% if product_image %}
+        <div class="image-section">
+            <div class="image-glow"></div>
+            <img src="{{ product_image }}" class="product-image" alt="Product">
+        </div>
+        {% endif %}
+
+        <div class="footer">CREATIVE SCALE V2</div>
+    </div>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        {% endif %}
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const hasVO = {% if vo_urls %}true{% else %}false{% endif %};
+            if (hasVO) {
+                const playVO = (id, delay) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.play().catch(e => console.log("Audio limited by browser policy. Click anywhere to enable VO."));
+                    }, delay);
+                };
+                playVO('vo-catchy', 3000);
+                playVO('vo-heading', 4500);
+                playVO('vo-content', 7200);
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

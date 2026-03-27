@@ -1,0 +1,147 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&f[]=satoshi@300,400,500,700,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-clay: #e0e5ec;
+  --clay-shadow-out: 18px 18px 36px #c3ccda, -18px -18px 36px #fdffff;
+  --clay-shadow-in: inset 8px 8px 16px #c3ccda, inset -8px -8px 16px #fdffff;
+  --clay-shadow-btn: 8px 8px 16px #c3ccda, -8px -8px 16px #fdffff;
+  --clay-shadow-btn-active: inset 6px 6px 12px #c3ccda, inset -6px -6px 12px #fdffff;
+  --accent: #ff7b54;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-clay);
+  color: var(--text-primary);
+  font-family: 'Satoshi', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Clash Display', sans-serif;
+}
+
+.stylish-serif {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* Base Clay Form */
+.clay-card {
+  background-color: var(--bg-clay);
+  border-radius: 40px;
+  box-shadow: var(--clay-shadow-out);
+  border: 4px solid #eef2f6; /* Very subtle lighter rim to enhance puffiness */
+}
+
+.clay-card-inset {
+  background-color: var(--bg-clay);
+  border-radius: 32px;
+  box-shadow: var(--clay-shadow-in);
+  border: 4px solid #d5dce6; /* Darker inner rim */
+}
+
+.clay-btn {
+  @apply px-6 py-4 font-bold transition-all duration-300;
+  background-color: var(--bg-clay);
+  color: var(--text-primary);
+  border-radius: 20px;
+  box-shadow: var(--clay-shadow-btn);
+  border: 2px solid transparent;
+}
+
+.clay-btn:hover {
+  transform: translateY(-2px);
+}
+
+.clay-btn:active,
+.clay-btn.active {
+  transform: translateY(0);
+  box-shadow: var(--clay-shadow-btn-active);
+}
+
+.clay-btn-primary {
+  background-color: var(--accent);
+  color: white;
+  box-shadow:
+    5px 5px 15px rgba(255, 123, 84, 0.4),
+    -5px -5px 15px #ffffff,
+    inset 2px 2px 5px rgba(255, 255, 255, 0.3);
+}
+
+.clay-btn-primary:active {
+  box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.clay-input {
+  @apply w-full px-6 py-4 rounded-2xl focus:outline-none transition-all;
+  background-color: var(--bg-clay);
+  color: var(--text-primary);
+  box-shadow: var(--clay-shadow-in);
+  border: 2px solid transparent;
+}
+
+.clay-input:focus {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Typography styles to replace neon */
+.soft-text {
+  color: var(--text-secondary);
+}
+
+/* Liquid Glassmorphism Effect */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+/* Custom Scrollbar for Light UI */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide scrollbar completely but allow scrolling */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swiss Grid Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&family=Inter:wght@900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#000000' }}{% endif %};
+            --font-head: 'Inter', 'Helvetica', sans-serif;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            font-family: var(--font-head);
+            background-color: #fff;
+            color: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .grid {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            border: 1px solid #eee;
+        }
+
+        .cell {
+            border: 1px solid #eee;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .headline-cell {
+            grid-column: 1 / 6;
+            grid-row: 3 / 8;
+            border: none;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-size: {{ (ratio.width / 11)|int }}px;
+            line-height: 0.95;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .cta-cell {
+            grid-column: 5 / 7;
+            grid-row: 11 / 13;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .cta-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .meta-cell {
+            grid-column: 1 / 3;
+            grid-row: 1 / 2;
+            font-size: 12px;
+            font-weight: bold;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .accent-cell {
+            grid-column: 6 / 7;
+            grid-row: 1 / 5;
+            background-color: var(--primary);
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: geometricSlide 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 5s;
+            {% else %}
+            opacity: 0.8;
+            {% endif %}
+        }
+
+        /* 10-Second Mathematical Narrative */
+        @keyframes gridFade {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes geometricSlide {
+            0% { transform: translateY(100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes sideSlide {
+            0% { transform: translateX(-100%); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes cellPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes blockFill {
+            0% { clip-path: inset(100% 0 0 0); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+
+        .grid {
+            {% if render_mode != 'static' %}
+            animation: gridFade 1s ease-in forwards;
+            {% endif %}
+        }
+
+        h1 {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: sideSlide 1s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            animation-delay: 6s;
+            {% endif %}
+        }
+
+        .meta-cell {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: geometricSlide 0.6s ease-out forwards;
+            animation-delay: 1s;
+            {% endif %}
+        }
+
+        .accent-cell {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: blockFill 1.5s cubic-bezier(1, 0, 0, 1) forwards;
+            animation-delay: 2s;
+            {% endif %}
+        }
+
+        .cta-cell {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: blockFill 1s cubic-bezier(1, 0, 0, 1) forwards;
+            animation-delay: 8s;
+            {% endif %}
+        }
+
+        .subheadline {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: sideSlide 1s ease-out forwards;
+            animation-delay: 7s;
+            {% endif %}
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        <div class="cell meta-cell">ADMORPH // GRID_SYSTEM</div>
+        <div class="cell accent-cell"></div>
+        <div class="cell headline-cell">
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+        <p class="subheadline" style="font-size: clamp(1.2rem, 3vw, 2rem); margin-bottom: 2rem; opacity: 0.9; text-wrap: balance;">{{ content }}</p>
+        </div>
+        <div class="cell"></div>
+        <div class="cell cta-cell">
+            <a href="#" class="cta-link">{{ cta }}</a>
+        </div>
+    </div>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        {% endif %}
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const hasVO = {% if vo_urls %}true{% else %}false{% endif %};
+            if (hasVO) {
+                const playVO = (id, delay) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.play().catch(e => console.log("Audio limited."));
+                    }, delay);
+                };
+                playVO('vo-catchy', 5000);
+                playVO('vo-heading', 6500);
+                playVO('vo-content', 8000);
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

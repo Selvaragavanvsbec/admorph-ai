@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Aurora Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.text_color }}{% endif %};
+            --font-main: 'Outfit', sans-serif;
+            --radius: {{ theme.border_radius|default('32px') }};
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: {{ ratio.width }}px;
+            height: {{ ratio.height }}px;
+            font-family: var(--font-main);
+            color: var(--accent);
+            display: flex;
+            align-items: center; justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            position: relative;
+        }
+
+        /* Abstract Aurora Blobs */
+        .aurora-container {
+            position: absolute; inset: -40%; z-index: 0; filter: blur(80px); opacity: 0.7;
+        }
+        .blob-1 {
+            position: absolute; width: 60%; height: 60%; top: 20%; left: 5%;
+            background: var(--primary); border-radius: 50%;
+            animation: float 15s ease-in-out infinite alternate;
+        }
+        .blob-2 {
+            position: absolute; width: 50%; height: 50%; bottom: 10%; right: 10%;
+            background: var(--secondary); border-radius: 50%;
+            animation: float 20s ease-in-out infinite alternate-reverse;
+        }
+        .blob-3 {
+            position: absolute; width: 40%; height: 40%; top: -10%; right: 40%;
+            background: #ff00ff; border-radius: 50%; opacity: 0.4;
+            animation: float 18s ease-in-out infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(15%, 10%) scale(1.1) rotate(45deg); }
+            100% { transform: translate(-10%, 20%) scale(0.9) rotate(90deg); }
+        }
+
+        /* Frosted Glass Container */
+        .glass-card {
+            width: 85%; height: 85%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            padding: 3rem; box-sizing: border-box;
+            position: relative;
+            {% if ratio.width > ratio.height %}
+            flex-direction: row; align-items: center;
+            {% endif %}
+        }
+
+        /* Inner Layout */
+        .content-wrap {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; z-index: 2;
+            {% if ratio.width > ratio.height %} padding-right: 2rem; {% endif %}
+        }
+
+        .catchy {
+            font-size: clamp(0.9rem, 1.5cqi, 1.1rem);
+            text-transform: uppercase; letter-spacing: 0.2em;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 0.5rem;
+            display: inline-block; padding: 0.5rem 1rem; border-radius: 100px;
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8cqi, 5rem);
+            font-weight: 900; line-height: 1.1; margin: 0 0 1rem 0;
+            background: linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.6) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        p.content {
+            font-size: clamp(1rem, 2cqi, 1.5rem);
+            line-height: 1.5; color: rgba(255,255,255,0.8);
+            margin: 0 0 2rem 0; font-weight: 300; max-width: 90%;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #ffffff; padding: 1.2rem 2.5rem; border-radius: 100px;
+            font-weight: 700; width: fit-content; text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+
+        .image-wrap {
+            {% if ratio.width > ratio.height %}
+            flex: 1; height: 100%; border-radius: calc(var(--radius) - 10px);
+            {% else %}
+            flex: 1; width: 100%; border-radius: calc(var(--radius) - 10px); margin-bottom: 2rem;
+            {% endif %}
+            overflow: hidden; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .image-wrap img {
+            width: 100%; height: 100%; object-fit: cover; filter: contrast(1.1) saturate(1.1);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="aurora-container">
+        <div class="blob-1"></div>
+        <div class="blob-2"></div>
+        <div class="blob-3"></div>
+    </div>
+    
+    <div class="glass-card">
+        <div class="image-wrap glass-img">
+            <img src="{{ product_image }}" alt="Product Image">
+        </div>
+        <div class="content-wrap">
+            <div class="catchy glass-txt">{{ catchy_line }}</div>
+            <h1 class="glass-hd">{{ heading }}</h1>
+            <p class="content glass-txt">{{ content }}</p>
+            <div class="cta glass-txt">{{ cta }}</div>
+        </div>
+    </div>
+
+    {% if render_mode != 'static' %}
+        {% if vo_urls %}
+        <div style="display:none">
+            <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+            <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+            <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+            <audio id="vo-cta" src="{{ vo_urls.cta }}"></audio>
+        </div>
+        {% endif %}
+        
+        <script>
+            // Audio Logic
+            const hasMP3 = "{{ 'true' if vo_urls else 'false' }}" === 'true';
+            const startNarrative = () => {
+                if (hasMP3) {
+                    setTimeout(() => document.getElementById('vo-catchy')?.play(), 1000);
+                    setTimeout(() => document.getElementById('vo-heading')?.play(), 2500);
+                    setTimeout(() => document.getElementById('vo-content')?.play(), 5000);
+                    setTimeout(() => document.getElementById('vo-cta')?.play(), 7500);
+                }
+            };
+            window.addEventListener('message', (e) => {
+                if (e.data && e.data.type === 'PLAY_AUDIO') startNarrative();
+            });
+
+            // GSAP Animations
+            document.addEventListener('DOMContentLoaded', () => {
+                gsap.set('.glass-card', { filter: "blur(20px)", opacity: 0, scale: 0.95 });
+                gsap.set('.glass-img', { x: -40, opacity: 0 });
+                gsap.set('.glass-txt, .glass-hd', { x: 40, opacity: 0 });
+
+                const tl = gsap.timeline({delay: 0.2});
+                tl.to('.glass-card', { filter: "blur(0px)", opacity: 1, scale: 1, duration: 1.5, ease: "power3.out" })
+                  .to('.glass-img', { x: 0, opacity: 1, duration: 1.2, ease: "power2.out" }, "-=1")
+                  .to('.glass-txt, .glass-hd', { x: 0, opacity: 1, duration: 1, stagger: 0.15, ease: "power2.out" }, "-=0.8");
+            });
+        </script>
+    {% endif %}
+</body>
+</html>

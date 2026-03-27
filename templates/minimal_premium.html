@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Premium Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#000000' }}{% endif %};
+            --text-color: {{ theme.text_color }};
+            --font-main: 'Inter', sans-serif;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            font-family: var(--font-main);
+            background-color: #f8f9fa;
+            color: #1a1a1a;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 85%;
+            height: 85%;
+            border: 2px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: white;
+            position: relative;
+        }
+
+        .product-tag {
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary);
+            align-self: flex-start;
+            padding-bottom: 5px;
+        }
+
+        h1 {
+            font-size: {{ (ratio.width / 12)|int }}px;
+            line-height: 1.1;
+            margin: 0;
+            font-weight: 900;
+            color: #1a1a1a;
+            max-width: 90%;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .cta {
+            background: #1a1a1a;
+            color: white;
+            padding: 15px 35px;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: -1px;
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+    <style>
+        /* ... previous styles ... */
+        @keyframes subtleReveal {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            {% if render_mode != 'static' %}
+            animation: scaleIn 1.5s ease-out forwards;
+            {% endif %}
+        }
+
+        .product-tag {
+            {% if render_mode != 'static' %}
+            animation: subtleReveal 1s ease-out forwards;
+            animation-delay: 1.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .catchy-line {
+            {% if render_mode != 'static' %}
+            animation: subtitleReveal 1s ease-out forwards;
+            animation-delay: 3s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        h1 {
+            {% if render_mode != 'static' %}
+            animation: subtleReveal 1.2s ease-out forwards;
+            animation-delay: 5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .subheadline {
+            {% if render_mode != 'static' %}
+            animation: subtleReveal 1.2s ease-out forwards;
+            animation-delay: 7s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .footer {
+            {% if render_mode != 'static' %}
+            animation: subtleReveal 1s ease-out forwards;
+            animation-delay: 8.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        @keyframes subtitleReveal {
+            from { opacity: 0; letter-spacing: 12px; }
+            to { opacity: 0.8; letter-spacing: 0.15em; }
+        }
+    </style>
+</head>
+
+<body>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        <audio id="vo-cta" src="{{ vo_urls.cta }}"></audio>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="product-tag">Premium Edition</div>
+        <div class="copy-section">
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+            <p class="subheadline" style="font-size: clamp(1.2rem, 3vw, 2rem); margin-top: 1.5rem; opacity: 0.9; text-wrap: balance;">{{ content }}</p>
+        </div>
+        <div class="footer">
+            <div class="brand-logo">ADMORPH.</div>
+            <a href="#" class="cta">{{ cta }}</a>
+        </div>
+    </div>
+
+    {% if render_mode != 'static' %}
+    <div id="audio-blocker" style="display: none; position: absolute; inset: 0; background: transparent; z-index: 999; cursor: pointer; align-items: center; justify-content: center; flex-direction: column; gap: 15px;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: #1a1a1a; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(0,0,0,0.7), 0 0 80px rgba(0,0,0,0.3); animation: pulse 1.5s ease-in-out infinite;">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span style="color: white; font-family: sans-serif; font-weight: 900; letter-spacing: 0.25em; font-size: 11px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">▶ Play AI Narrative</span>
+        <style>@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }</style>
+    </div>
+
+    <script>
+        const catchyText = {{ catchy_line | tojson }};
+        const headingText = {{ heading | tojson }};
+        const contentText = {{ content | tojson }};
+        const hasMP3 = "{{ 'true' if vo_urls else 'false' }}" === 'true';
+
+        const blocker = document.getElementById('audio-blocker');
+        if (hasMP3) { blocker.style.display = 'flex'; }
+
+        const speak = (text, delay) => {
+            setTimeout(() => {
+                if (!window.speechSynthesis) return;
+                const utt = new SpeechSynthesisUtterance(text);
+                utt.rate = 0.95; utt.pitch = 1.0; utt.volume = 1.0;
+                const voices = speechSynthesis.getVoices();
+                const eng = voices.find(v => v.lang.startsWith('en-'));
+                if (eng) utt.voice = eng;
+                speechSynthesis.speak(utt);
+            }, delay);
+        };
+
+        const playMP3 = (id, delay) => {
+            setTimeout(() => { const el = document.getElementById(id); if (el) el.play().catch(() => {}); }, delay);
+        };
+
+        const startNarrative = () => {
+            blocker.style.display = 'none';
+            if (hasMP3) {
+                playMP3('vo-catchy', 4000); playMP3('vo-heading', 5500); playMP3('vo-content', 7500); playMP3('vo-cta', 9000);
+            } else {
+                speak(catchyText, 4000); speak(headingText, 5500); speak(contentText, 7500); speak('Shop Now', 9000);
+            }
+        };
+        blocker.addEventListener('click', startNarrative);
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'PLAY_AUDIO') startNarrative();
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

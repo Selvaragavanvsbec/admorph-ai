@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Luxury Ad</title>
+    <!-- We load a beautiful Serif for luxury -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family={{ font_family|replace(' ', '+') }}&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#d4af37' }}{% endif %};
+            --text-color: {{ theme.text_color }};
+            --font-display: 'Playfair Display', serif;
+            --font-main: '{{ theme.font_family }}', sans-serif;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            background-color: var(--primary);
+            color: var(--secondary);
+            /* Luxury uses the accent for text often */
+            font-family: var(--font-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle Paper/Grain Texture */
+        .texture {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Elegant Thin Border Frame */
+        .luxury-frame {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            bottom: 2rem;
+            border: 1px solid var(--secondary);
+            border-radius: 4px;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .luxury-frame::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 1px solid var(--secondary);
+            opacity: 0.2;
+        }
+
+        /* Content Layout */
+        .content-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+
+            flex-direction: {
+                % if ratio.width>ratio.height %
+            }
+
+            row-reverse {
+                % else %
+            }
+
+            column {
+                % endif %
+            }
+
+            ;
+            width: 85%;
+            height: 85%;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 4rem;
+        }
+
+        .brand-name {
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+            color: var(--text-color);
+        }
+
+        .copy-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.1;
+            margin: 0 0 1rem 0;
+            color: var(--secondary);
+            text-wrap: balance;
+        }
+
+        .subheadline {
+            font-family: var(--font-main);
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 400;
+            line-height: 1.6;
+            margin: 0 0 3rem 0;
+            color: var(--text-color);
+            opacity: 0.8;
+            max-width: 80%;
+            text-wrap: balance;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+            padding: 1rem 3rem;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: transparent;
+            transition: all 0.5s ease;
+        }
+
+            {
+            % if product_image %
+        }
+
+        .image-side {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Adjustments for horizontal layout */
+        @media (min-aspect-ratio: 1/1) {
+            .copy-side {
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            h1 {
+                font-size: clamp(3rem, 6vw, 6rem);
+            }
+        }
+
+            {
+            % endif %
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        @keyframes luxuryFadeIn {
+            from { opacity: 0; transform: translateY(15px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes frameExpand {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 0.5; transform: scale(1); }
+        }
+
+        .luxury-frame {
+            {% if render_mode != 'static' %}
+            animation: frameExpand 2s ease-out forwards;
+            animation-delay: 1s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .brand-name {
+            {% if render_mode != 'static' %}
+            animation: luxuryFadeIn 1.5s ease-out forwards;
+            animation-delay: 2s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .catchy-line {
+            {% if render_mode != 'static' %}
+            animation: luxuryFadeIn 1.5s ease-out forwards;
+            animation-delay: 3.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        h1 {
+            {% if render_mode != 'static' %}
+            animation: luxuryFadeIn 2s ease-out forwards;
+            animation-delay: 5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .subheadline {
+            {% if render_mode != 'static' %}
+            animation: luxuryFadeIn 1.5s ease-out forwards;
+            animation-delay: 7s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .cta-btn {
+            {% if render_mode != 'static' %}
+            animation: luxuryFadeIn 1s ease-out forwards;
+            animation-delay: 9s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .product-image {
+            {% if render_mode != 'static' %}
+            animation: luxuryFadeIn 2s ease-out forwards;
+            animation-delay: 4s;
+            opacity: 0;
+            {% endif %}
+        }
+    </style>
+</head>
+
+<body>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="texture"></div>
+    <div class="luxury-frame"></div>
+
+    <div class="content-container">
+        <div class="copy-side">
+            <div class="brand-name">{{ product_name }}</div>
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+            <p class="subheadline">{{ content }}</p>
+            <a href="#" class="cta-btn">{{ cta }}</a>
+        </div>
+
+        {% if product_image %}
+        <div class="image-side">
+            <img src="{{ product_image }}" class="product-image" alt="Product Visual">
+        </div>
+        {% endif %}
+    </div>
+
+    {% if render_mode != 'static' %}
+    <script>
+        window.addEventListener('load', () => {
+            const hasVO = {% if vo_urls %}true{% else %}false{% endif %};
+            if (hasVO) {
+                const playVO = (id, delay) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.play().catch(e => console.log("Audio limited."));
+                    }, delay);
+                };
+                // Luxurious Slow Timings
+                playVO('vo-catchy', 4500);
+                playVO('vo-heading', 6000);
+                playVO('vo-content', 8000);
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

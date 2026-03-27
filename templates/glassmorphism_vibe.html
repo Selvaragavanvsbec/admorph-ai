@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassmorphism Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#ffffff' }}{% endif %};
+            --text-color: {{ theme.text_color }};
+            --font-main: '{{ theme.font_family }}', sans-serif;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: {{ ratio.width }}px;
+            height: {{ ratio.height }}px;
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Abstract glowing orbs in background */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 800px;
+            height: 800px;
+            background: var(--secondary);
+            top: -200px;
+            left: -200px;
+            opacity: 0.6;
+        }
+
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: var(--text-color);
+            bottom: -100px;
+            right: -100px;
+            opacity: 0.3;
+        }
+
+        /* The main layout container */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            height: 90%;
+            display: flex;
+
+            flex-direction: {
+                % if ratio.width>ratio.height %
+            }
+
+            row {
+                % else %
+            }
+
+            column {
+                % endif %
+            }
+
+            ;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Premium Glass Card */
+        .glass-card {
+            flex: {
+                % if product_image %
+            }
+
+            1 {
+                % else %
+            }
+
+            0 1 80% {
+                % endif %
+            }
+
+            ;
+            padding: 4rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3),
+            inset 0 2px 0 rgba(255, 255, 255, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            align-items: {
+                % if ratio.width>ratio.height and product_image %
+            }
+
+            flex-start;
+            text-align: left;
+
+                {
+                % else %
+            }
+
+            center;
+            text-align: center;
+
+                {
+                % endif %
+            }
+
+            color: var(--text-color);
+            z-index: 10;
+        }
+
+        .brand-pill {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: clamp(3rem, 6vw, 6rem);
+            line-height: 1.1;
+            margin: 0 0 1.5rem 0;
+            font-weight: 900;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-wrap: balance;
+            color: var(--text-color);
+        }
+
+        .subheadline {
+            font-size: clamp(1.1rem, 2.5vw, 2rem);
+            line-height: 1.5;
+            font-weight: 400;
+            opacity: 0.9;
+            margin: 0 0 3rem 0;
+            max-width: 90%;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-wrap: balance;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: var(--text-color);
+            color: var(--primary);
+            padding: 1.25rem 3.5rem;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        /* Visual Asset side */
+        .image-side {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100%;
+            z-index: 5;
+        }
+
+        .product-image {
+            max-width: 130%;
+            max-height: 130%;
+            object-fit: contain;
+            filter: drop-shadow(0 50px 80px rgba(0, 0, 0, 0.5));
+            transform: scale(1.1);
+        }
+
+        @media (max-aspect-ratio: 1/1) {
+            .glass-card {
+                padding: 3rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            h1 {
+                font-size: clamp(2.5rem, 8vw, 5rem);
+            }
+
+            .product-image {
+                transform: scale(1);
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+            .image-side {
+                flex: 0.8;
+            }
+        }
+    
+        .texture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.1;
+            pointer-events: none;
+            {% if render_mode != 'static' %}
+            animation: patternMove 60s linear infinite;
+            {% endif %}
+            
+            {% if theme.background_texture == 'dots' or theme.background_texture == 'subtle-dots' %}
+            background-image: radial-gradient(var(--text-color) 1.5px, transparent 1.5px);
+            background-size: 25px 25px;
+            {% elif theme.background_texture == 'grid' %}
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px);
+            {% elif theme.background_texture == 'diagonal-lines' %}
+            background: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 15px);
+            {% elif theme.background_texture == 'noise' %}
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            {% endif %}
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatOrbs {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        @keyframes kenBurns {
+            0% { transform: scale(1.1) translate(0, 0); }
+            50% { transform: scale(1.15) translate(-1%, -1%); }
+            100% { transform: scale(1.1) translate(0, 0); }
+        }
+
+        @keyframes patternMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+
+        .orb-1 {
+            {% if render_mode != 'static' %}
+            animation: orbBirth 4s ease-out forwards, floatOrbs 20s ease-in-out infinite 4s;
+            {% endif %}
+        }
+
+        .orb-2 {
+            {% if render_mode != 'static' %}
+            animation: orbBirth 5s ease-out forwards reverse, floatOrbs 25s ease-in-out infinite reverse 5s;
+            {% endif %}
+        }
+
+        /* 10-Second Ethereal Narrative */
+        @keyframes orbBirth {
+            0% { transform: scale(0) translate(-50%, -50%); opacity: 0; }
+            100% { transform: scale(1) translate(0, 0); opacity: 1; }
+        }
+
+        @keyframes glassReveal {
+            0% { backdrop-filter: blur(0); opacity: 0; transform: scale(0.95); }
+            100% { backdrop-filter: blur(20px); opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes etherealFade {
+            0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        @keyframes focusReveal {
+            0% { opacity: 0; filter: blur(20px) brightness(1.5); transform: scale(1.2); }
+            100% { opacity: 1; filter: blur(0) brightness(1); transform: scale(1.1); }
+        }
+
+        .frosted-container {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: glassReveal 2s ease-out forwards;
+            animation-delay: 3s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+        }
+
+        h1 {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: etherealFade 1.5s ease-out forwards;
+            animation-delay: 5s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+        }
+
+        .subheadline {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: etherealFade 1.5s ease-out forwards;
+            animation-delay: 6.5s;
+            {% else %}
+            opacity: 0.9;
+            {% endif %}
+        }
+
+        .cta-btn {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: etherealFade 1s ease-out forwards;
+            animation-delay: 8s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-image {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: focusReveal 4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 1.5s;
+            {% else %}
+            opacity: 1;
+            transform: scale(1.1);
+            {% endif %}
+        }
+
+        .catchy-line {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: etherealFade 1s ease-out forwards;
+            animation-delay: 4.5s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="texture-overlay"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="content-wrapper">
+        <div class="glass-card">
+            <div class="brand-pill">{{ product_name }}</div>
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+            <p class="subheadline">{{ content }}</p>
+            <a href="#" class="cta-btn">{{ cta }}</a>
+        </div>
+
+        {% if product_image %}
+        <div class="image-side">
+        {% endif %}
+    </div>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        <audio id="vo-cta" src="{{ vo_urls.cta }}"></audio>
+        {% endif %}
+    </div>
+
+    <div id="audio-blocker" style="display: none; position: absolute; inset: 0; background: transparent; z-index: 999; cursor: pointer; align-items: center; justify-content: center; flex-direction: column; gap: 15px;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px var(--primary), 0 0 80px rgba(0,0,0,0.3); animation: pulse 1.5s ease-in-out infinite;">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span style="color: white; font-family: sans-serif; font-weight: 900; letter-spacing: 0.25em; font-size: 11px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">▶ Play AI Narrative</span>
+        <style>@keyframes pulse { 0%,100%{transform:scale(1);box-shadow:0 0 40px var(--primary)} 50%{transform:scale(1.08);box-shadow:0 0 60px var(--primary)} }</style>
+    </div>
+
+    <script>
+        const catchyText = {{ catchy_line | tojson }};
+        const headingText = {{ heading | tojson }};
+        const contentText = {{ content | tojson }};
+        const hasMP3 = "{{ 'true' if vo_urls else 'false' }}" === 'true';
+
+        const blocker = document.getElementById('audio-blocker');
+        if (hasMP3) { blocker.style.display = 'flex'; }
+
+        const speak = (text, delay) => {
+            setTimeout(() => {
+                if (!window.speechSynthesis) return;
+                const utt = new SpeechSynthesisUtterance(text);
+                utt.rate = 1.0; utt.pitch = 1.0; utt.volume = 1.0;
+                const voices = speechSynthesis.getVoices();
+                const eng = voices.find(v => v.lang.startsWith('en-'));
+                if (eng) utt.voice = eng;
+                speechSynthesis.speak(utt);
+            }, delay);
+        };
+
+        const playMP3 = (id, delay) => {
+            setTimeout(() => { const el = document.getElementById(id); if (el) el.play().catch(() => {}); }, delay);
+        };
+
+        // Single unified play function called by either click OR postMessage
+        const startNarrative = () => {
+            blocker.style.display = 'none';
+            if (hasMP3) {
+                playMP3('vo-catchy', 4500);
+                playMP3('vo-heading', 5500);
+                playMP3('vo-content', 7500);
+                playMP3('vo-cta', 8500);
+            } else {
+                speak(catchyText, 4500);
+                speak(headingText, 5500);
+                speak(contentText, 7500);
+                speak('Shop Now', 8500);
+            }
+        };
+
+        blocker.addEventListener('click', startNarrative);
+        // Also respond to postMessage from parent Dashboard (single-click UX)
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'PLAY_AUDIO') startNarrative();
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

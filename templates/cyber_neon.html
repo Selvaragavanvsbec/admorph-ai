@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Neon Ad</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#00f2ff' }}{% endif %};
+            --font-head: 'Orbitron',
+            sans-serif;
+            --font-mono: 'JetBrains Mono',
+            monospace;
+            --neon-glow: 0 0 10px var(--secondary),
+            0 0 20px var(--secondary),
+            0 0 40px var(--secondary);
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            font-family: var(--font-head);
+            background-color: #050505;
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 85%;
+            height: 85%;
+            border: 2px solid var(--secondary);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .header-meta {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-size: {{ (ratio.width / 14)|int }}px;
+            line-height: 1.1;
+            margin: 0;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: var(--neon-glow);
+            letter-spacing: -2px;
+        }
+
+        .product-image {
+            max-width: 80%;
+            max-height: 40%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px var(--secondary));
+            margin: 20px auto;
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .cta {
+            align-self: flex-end;
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            padding: 15px 40px;
+            font-family: var(--font-mono);
+            font-size: 18px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .glitch-footer {
+            font-size: 10px;
+            opacity: 0.5;
+            font-family: var(--font-mono);
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: terminalSweep 1s steps(20) forwards;
+            animation-delay: 5s;
+            {% else %}
+            opacity: 0.8;
+            {% endif %}
+        }
+
+        /* 10-Second Digital Overload Narrative */
+        @keyframes powerUp {
+            0% { opacity: 0; filter: brightness(0); }
+            10%, 30%, 50% { opacity: 0.5; filter: brightness(2); }
+            20%, 40%, 60% { opacity: 0.1; filter: brightness(0.5); }
+            100% { opacity: 1; filter: brightness(1); }
+        }
+
+        @keyframes glitchReveal {
+            0% { opacity: 0; transform: translate(20px, -10px) skew(10deg); filter: hue-rotate(90deg); }
+            5% { opacity: 0.5; transform: translate(-10px, 5px) skew(-5deg); }
+            10% { opacity: 0.2; transform: translate(5px, 10px); }
+            15% { opacity: 1; transform: translate(0, 0) skew(0); filter: hue-rotate(0); }
+            100% { transform: scale(1.05); }
+        }
+
+        @keyframes terminalSweep {
+            0% { opacity: 0; clip-path: inset(0 100% 0 0); }
+            100% { opacity: 1; clip-path: inset(0 0 0 0); }
+        }
+
+        @keyframes scanlineDiagnostic {
+            0% { transform: translateY(-100%); opacity: 1; }
+            30% { transform: translateY(100%); opacity: 1; }
+            31% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes neonPulseLong {
+            0%, 100% { text-shadow: var(--neon-glow); opacity: 1; }
+            50% { text-shadow: 0 0 10px var(--secondary), 0 0 30px var(--secondary); opacity: 0.7; }
+        }
+
+        .scanline::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, var(--secondary));
+            opacity: 0.1;
+            {% if render_mode != 'static' %}
+            animation: scanlineDiagnostic 2s ease-in-out forwards, scanline 4s linear infinite 2s;
+            {% endif %}
+        }
+
+        .grid-bg {
+            {% if render_mode != 'static' %}
+            animation: powerUp 3s ease-out forwards;
+            {% endif %}
+        }
+
+        h1 {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: powerUp 1.5s ease-out forwards, neonPulseLong 2s ease-in-out infinite 6.5s;
+            animation-delay: 5.5s;
+            {% endif %}
+        }
+
+        .subheadline {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: terminalSweep 1.5s steps(30) forwards;
+            animation-delay: 7s;
+            {% else %}
+            opacity: 0.9;
+            {% endif %}
+        }
+
+        .cta {
+            {% if render_mode != 'static' %}
+            opacity: 0;
+            animation: powerUp 1s ease-out forwards;
+            animation-delay: 8.5s;
+            {% else %}
+            opacity: 1;
+            {% endif %}
+            transition: all 0.3s ease;
+        }
+
+        .product-image {
+            opacity: 0;
+            {% if render_mode != 'static' %}
+            animation: glitchReveal 10s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 2s;
+            {% else %}
+            opacity: 1;
+            transform: scale(1.05);
+            {% endif %}
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="grid-bg"></div>
+    <div class="scanline"></div>
+    <div class="container">
+        <div class="header-meta">
+            <span>SECURE LINK_ENABLED</span>
+            <span>V_2.0</span>
+        </div>
+        {% if product_image %}
+        <img src="{{ product_image }}" class="product-image" alt="Product">
+        {% endif %}
+        <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+        <p class="subheadline" style="font-size: clamp(1.2rem, 3vw, 2rem); margin-bottom: 2rem; opacity: 0.9; text-wrap: balance;">{{ content }}</p>
+        <a href="#" class="cta">> {{ cta }}</a>
+        <div class="glitch-footer">ADMORPH SYSTEM // LOG_ACTIVE</div>
+    </div>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        {% endif %}
+    </div>
+    <script>
+        window.addEventListener('load', () => {
+            const hasVO = {% if vo_urls %}true{% else %}false{% endif %};
+            if (hasVO) {
+                const playVO = (id, delay) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.play().catch(e => console.log("Audio limited."));
+                    }, delay);
+                };
+                playVO('vo-catchy', 5000);
+                playVO('vo-heading', 6500);
+                playVO('vo-content', 8000);
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

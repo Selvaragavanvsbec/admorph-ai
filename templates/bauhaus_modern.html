@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bauhaus Modern Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#000000' }}{% endif %};
+            --font-head: 'DM Sans',
+            sans-serif;
+            --bauhaus-yellow: #ffcc00;
+            --bauhaus-red: #ff3300;
+            --bauhaus-blue: #0066cc;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            font-family: var(--font-head);
+            background-color: #f4f4f4;
+            color: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(12, 1fr);
+            z-index: 1;
+        }
+
+        .shape-1 {
+            grid-column: 1 / 5;
+            grid-row: 1 / 13;
+            background-color: var(--bauhaus-red);
+            border-right: 5px solid #000;
+        }
+
+        .shape-2 {
+            grid-column: 5 / 13;
+            grid-row: 10 / 13;
+            background-color: var(--bauhaus-yellow);
+            border-top: 5px solid #000;
+        }
+
+        .shape-3 {
+            grid-column: 9 / 13;
+            grid-row: 1 / 5;
+            background-color: var(--bauhaus-blue);
+            border-radius: 50%;
+            margin: 20px;
+            border: 5px solid #000;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 70%;
+            height: 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+            background: white;
+            border: 5px solid #000;
+        }
+
+        .product-image {
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            background: #eee;
+            border-bottom: 5px solid #000;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: {{ (ratio.width / 12)|int }}px;
+            line-height: 1.0;
+            margin: 0;
+            font-weight: 900;
+            text-transform: lowercase;
+            letter-spacing: -4px;
+        }
+
+        .meta {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .cta {
+            margin-top: 20px;
+            font-weight: 900;
+            font-size: 24px;
+            text-decoration: none;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .cta::after {
+            content: '';
+            width: 50px;
+            height: 5px;
+            background: var(--bauhaus-red);
+            display: inline-block;
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="grid">
+        <div class="shape-1"></div>
+        <div class="shape-2"></div>
+        <div class="shape-3"></div>
+    </div>
+    <div class="content">
+        <div class="meta">ADMORPH ART // FORM FOLLOWS FUNCTION</div>
+        {% if product_image %}
+        <img src="{{ product_image }}" class="product-image" alt="Product">
+        {% endif %}
+        <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+        <p class="subheadline" style="font-size: clamp(1.2rem, 3vw, 2rem); margin-bottom: 2rem; opacity: 0.9; text-wrap: balance;">{{ content }}</p>
+        <a href="#" class="cta">{{ cta }}</a>
+    </div>
+</body>
+
+</html>

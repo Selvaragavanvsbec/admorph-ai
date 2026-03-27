@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Collage Ad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Permanent+Marker&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#000000' }}{% endif %};
+            --font-head: 'Bebas Neue', sans-serif;
+            --font-accent: 'Permanent Marker', cursive;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            font-family: var(--font-head);
+            background-color: #333;
+            background-image: url('https://www.transparenttextures.com/patterns/pinstriped-suit.png');
+            color: #fff;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .tape {
+            position: absolute;
+            width: 200px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transform: rotate(-45deg);
+            top: 20px;
+            left: -50px;
+            z-index: 5;
+        }
+
+        .paper {
+            width: 80%;
+            height: 80%;
+            background: #eee;
+            color: #222;
+            padding: 60px;
+            box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.5);
+            transform: rotate(2deg);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            border-left: 10px solid var(--primary);
+        }
+
+        h1 {
+            font-size: {{ (ratio.width / 9)|int }}px;
+            line-height: 0.9;
+            margin: 0;
+            color: #000;
+            text-transform: uppercase;
+        }
+
+        .cta {
+            font-family: var(--font-accent);
+            font-size: 32px;
+            color: var(--secondary);
+            background: #000;
+            padding: 10px 30px;
+            align-self: flex-start;
+            transform: rotate(-3deg);
+            text-decoration: none;
+        }
+
+        .stamp {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            width: 100px;
+            height: 100px;
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            transform: rotate(20deg);
+            opacity: 0.6;
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        @keyframes paperSlide {
+            0% { transform: translateY(100%) rotate(10deg); opacity: 0; }
+            100% { transform: translateY(0) rotate(2deg); opacity: 1; }
+        }
+
+        @keyframes stampPop {
+            0% { transform: scale(3) rotate(0deg); opacity: 0; }
+            80% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1) rotate(20deg); opacity: 0.6; }
+        }
+
+        @keyframes roughReveal {
+            from { clip-path: inset(0 100% 0 0); }
+            to { clip-path: inset(0 0 0 0); }
+        }
+
+        .paper {
+            {% if render_mode != 'static' %}
+            animation: paperSlide 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            {% endif %}
+        }
+
+        .catchy-line {
+            {% if render_mode != 'static' %}
+            animation: roughReveal 0.8s ease-out forwards;
+            animation-delay: 2.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        h1 {
+            {% if render_mode != 'static' %}
+            animation: roughReveal 1s ease-out forwards;
+            animation-delay: 4.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .subheadline {
+            {% if render_mode != 'static' %}
+            animation: roughReveal 1s ease-out forwards;
+            animation-delay: 6.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .cta {
+            {% if render_mode != 'static' %}
+            animation: paperSlide 0.5s ease-out forwards;
+            animation-delay: 8.5s;
+            opacity: 0;
+            {% endif %}
+        }
+
+        .stamp {
+            {% if render_mode != 'static' %}
+            animation: stampPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 9.2s;
+            opacity: 0;
+            {% endif %}
+        }
+    </style>
+</head>
+
+<body>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        <audio id="vo-cta" src="{{ vo_urls.cta }}"></audio>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="tape"></div>
+    <div class="paper">
+        <div class="copy-box">
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+            <p class="subheadline" style="font-size: clamp(1.2rem, 3vw, 2rem); margin-top: 1rem; margin-bottom: 2rem; opacity: 0.9; text-wrap: balance;">{{ content }}</p>
+        </div>
+        <a href="#" class="cta">{{ cta }}</a>
+        <div class="stamp">AUTHENTIC<br>ADMORPH</div>
+    </div>
+
+    {% if render_mode != 'static' %}
+    <div id="audio-blocker" style="display: none; position: absolute; inset: 0; background: transparent; z-index: 999; cursor: pointer; align-items: center; justify-content: center; flex-direction: column; gap: 15px;">
+        <div style="width: 70px; height: 70px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px var(--primary), 0 0 80px rgba(0,0,0,0.3); animation: pulse 1.5s ease-in-out infinite;">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <span style="color: white; font-family: sans-serif; font-weight: 900; letter-spacing: 0.25em; font-size: 11px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">▶ Play AI Narrative</span>
+        <style>@keyframes pulse { 0%,100%{transform:scale(1);box-shadow:0 0 40px var(--primary)} 50%{transform:scale(1.08);box-shadow:0 0 60px var(--primary)} }</style>
+    </div>
+
+    <script>
+        // Texts injected from backend
+        const catchyText = {{ catchy_line | tojson }};
+        const headingText = {{ heading | tojson }};
+        const contentText = {{ content | tojson }};
+
+        // Also check if premium MP3s exist
+        const hasMP3 = "{{ 'true' if vo_urls else 'false' }}" === 'true';
+
+        const blocker = document.getElementById('audio-blocker');
+        if (hasMP3) { blocker.style.display = 'flex'; }
+
+        // Browser speechSynthesis narrator (offline, zero-latency)
+        const speak = (text, delay) => {
+            setTimeout(() => {
+                if (!window.speechSynthesis) return;
+                const utt = new SpeechSynthesisUtterance(text);
+                utt.rate = 1.0;
+                utt.pitch = 1.0;
+                utt.volume = 1.0;
+                // Try to pick an English voice
+                const voices = speechSynthesis.getVoices();
+                const eng = voices.find(v => v.lang.startsWith('en'));
+                if (eng) utt.voice = eng;
+                speechSynthesis.speak(utt);
+            }, delay);
+        };
+
+        // Fallback to premium MP3 if it exists
+        const playMP3 = (id, delay) => {
+            if (!hasMP3) return;
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) el.play().catch(() => {});
+            }, delay);
+        };
+
+        const startNarrative = () => {
+            blocker.style.display = 'none';
+            if (hasMP3) {
+                playMP3('vo-catchy', 3500);
+                playMP3('vo-heading', 5000);
+                playMP3('vo-content', 7500);
+                playMP3('vo-cta', 9200);
+            } else {
+                speak(catchyText, 3500);
+                speak(headingText, 5000);
+                speak(contentText, 7500);
+                speak('Shop Now', 9200);
+            }
+        };
+        blocker.addEventListener('click', startNarrative);
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'PLAY_AUDIO') startNarrative();
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

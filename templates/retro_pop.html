@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Pop Poster</title>
+    <link href="https://fonts.googleapis.com/css2?family={{ font_family|replace(' ', '+') }}&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: {% if brand_primary %}{{ brand_primary }}{% else %}{{ theme.primary_color }}{% endif %};
+            --secondary: {% if brand_secondary %}{{ brand_secondary }}{% else %}{{ theme.secondary_color }}{% endif %};
+            --accent: {% if brand_accent %}{{ brand_accent }}{% else %}{{ theme.accent_color or '#000000' }}{% endif %};
+            --text-color: {{ theme.text_color }};
+            --font-main: '{{ theme.font_family }}', cursive;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+
+            width: {{ ratio.width }}px;
+
+            height: {{ ratio.height }}px;
+            font-family: var(--font-main);
+            background-color: var(--primary);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: radial-gradient(var(--secondary) 15%, transparent 15%);
+            background-size: 40px 40px;
+            position: relative;
+        }
+
+        .border-box {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            right: 2rem;
+            bottom: 2rem;
+            border: 8px solid var(--text-color);
+            background-color: var(--primary);
+            box-shadow: 20px 20px 0px var(--secondary);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            padding: 3rem;
+            z-index: 10;
+        }
+
+        /* 90s Sticker Effect */
+        .sticker-header {
+            align-self: flex-start;
+            background-color: var(--secondary);
+            color: var(--text-color);
+            padding: 0.5rem 1.5rem;
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 4px solid var(--text-color);
+            box-shadow: 8px 8px 0px var(--text-color);
+            transform: rotate(-3deg);
+            margin-bottom: 2rem;
+            z-index: 12;
+        }
+
+        /* Hero Text */
+        .copy-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 11;
+        }
+
+        h1 {
+            font-size: clamp(4rem, 10vw, 9rem);
+            color: var(--text-color);
+            text-transform: uppercase;
+            margin: 0 0 1rem 0;
+            line-height: 0.9;
+            text-shadow: 6px 6px 0px var(--secondary), -4px -4px 0px #fff;
+            -webkit-text-stroke: 2px var(--text-color);
+            word-break: break-word;
+            text-wrap: balance;
+        }
+
+        .subheadline {
+            font-size: clamp(1.2rem, 3vw, 2.5rem);
+            color: #fff;
+            background-color: var(--text-color);
+            padding: 0.5rem 1rem;
+            margin: 0;
+            line-height: 1.3;
+            max-width: 80%;
+            border: 3px solid var(--text-color);
+            box-shadow: 4px 4px 0px var(--secondary);
+            font-weight: bold;
+            transform: rotate(-1deg);
+            text-wrap: balance;
+        }
+
+        /* Dynamic Image Placement */
+        .product-image-container {
+            position: absolute;
+            bottom: 5%;
+            right: 5%;
+            width: 50%;
+            height: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            transform: rotate(5deg);
+        }
+
+        .product-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(15px 15px 0px var(--text-color));
+        }
+
+        /* Bold 90s CTA Button */
+        .cta-button {
+            display: inline-block;
+            align-self: flex-start;
+            margin-top: 3rem;
+            background-color: #fff;
+            color: var(--text-color);
+            padding: 1rem 3rem;
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 4px solid var(--text-color);
+            box-shadow: 8px 8px 0px var(--text-color);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translate(4px, 4px);
+            box-shadow: 4px 4px 0px var(--text-color);
+        }
+
+        /* Quirky starburst shapes */
+        .burst {
+            position: absolute;
+            background: var(--text-color);
+            width: 80px;
+            height: 80px;
+            text-align: center;
+            animation: spin 10s linear infinite;
+        }
+
+        .burst-1 {
+            top: 10%;
+            right: 10%;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        .burst-2 {
+            bottom: 20%;
+            left: 5%;
+            transform: scale(0.6) rotate(45deg);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        }
+
+        @media (max-aspect-ratio: 4/5) {
+            .product-image-container {
+                position: relative;
+                width: 100%;
+                bottom: 0;
+                right: 0;
+                margin-top: 2rem;
+            }
+
+            .copy-area {
+                justify-content: flex-start;
+            }
+
+            h1 {
+                font-size: clamp(3rem, 15vw, 6rem);
+            }
+        }
+    
+        .catchy-line {
+            font-size: clamp(0.9rem, 1.5cqi, 1.5rem);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        
+        @keyframes popReveal {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            70% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        @keyframes snapIn {
+            0% { transform: translateX(-100%) skewX(20deg); opacity: 0; }
+            100% { transform: translateX(0) skewX(0); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    {% if render_mode != 'static' %}
+    <div id="vo-container" style="display: none;">
+        {% if vo_urls %}
+        <audio id="vo-catchy" src="{{ vo_urls.catchy }}"></audio>
+        <audio id="vo-heading" src="{{ vo_urls.heading }}"></audio>
+        <audio id="vo-content" src="{{ vo_urls.content }}"></audio>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="burst burst-1"></div>
+    <div class="burst burst-2"></div>
+
+    <div class="border-box">
+        <div class="sticker-header">
+            {{ product_name }}
+        </div>
+
+        <div class="copy-area">
+            <p class="catchy-line">{{ catchy_line }}</p>
+            <h1>{{ heading }}</h1>
+            <p class="subheadline">{{ content }}</p>
+            <a href="#" class="cta-button">{{ cta }}</a>
+        </div>
+
+        {% if product_image %}
+        <div class="product-image-container">
+            <img src="{{ product_image }}" class="product-image" alt="Product">
+        </div>
+        {% endif %}
+    </div>
+
+    {% if render_mode != 'static' %}
+    <script>
+        window.addEventListener('load', () => {
+            const hasVO = {% if vo_urls %}true{% else %}false{% endif %};
+            if (hasVO) {
+                const playVO = (id, delay) => {
+                    setTimeout(() => {
+                        const el = document.getElementById(id);
+                        if (el) el.play().catch(e => console.log("Audio limited."));
+                    }, delay);
+                };
+                // Snappy Retro Timings
+                playVO('vo-catchy', 4000);
+                playVO('vo-heading', 5000);
+                playVO('vo-content', 7000);
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; }
+    .ad {
+      width: 1080px; height: 1350px; box-sizing: border-box;
+      background: linear-gradient(160deg, {{ variant.visual.background }}, {{ variant.visual.accent }});
+      color: {{ variant.visual.text_color }}; padding: 72px; position: relative;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .headline { font-size: 70px; font-weight: 800; line-height: 1.08; max-width: 860px; }
+    .cta {
+      align-self: flex-start; background: #ffffff; color: #111111; border-radius: 16px;
+      padding: 18px 30px; font-size: 32px; font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="ad">
+    <div class="headline">{{ variant.headline }}</div>
+    <div class="cta">{{ variant.cta }}</div>
+  </div>
+</body>
+</html>
