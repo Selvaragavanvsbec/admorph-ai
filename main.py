@@ -75,12 +75,18 @@ app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
 # Serve frontend static files in production
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+STATIC_DIR = os.path.join(FRONTEND_DIST, "static")
+
 if os.path.exists(FRONTEND_DIST):
+    # If standard static folder exists, explicitly mount it for proper JS/CSS MIME types
+    if os.path.exists(STATIC_DIR):
+        app.mount("/static", StaticFiles(directory=STATIC_DIR), name="frontend-static")
+        
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
         """Serve frontend SPA - catch-all route for client-side routing."""
         file_path = os.path.join(FRONTEND_DIST, full_path)
-        if os.path.exists(file_path) and os.path.isfile(file_path):
+        if os.path.exists(file_path) and os.path.isfile(file_path) and not full_path.startswith("static/"):
             return FileResponse(file_path)
         return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
 
